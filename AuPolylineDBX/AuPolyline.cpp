@@ -231,17 +231,21 @@ Acad::ErrorStatus AuPolyline::subMoveGripPointsAt(
 )
 {
 	assertWriteEnabled();
+	int idx = 0;
 	for (int g = 0; g < gripAppData.length(); g++)
 	{
 		//Get grip data back and see if it is our 0 Grip
 		int i = (int)gripAppData.at(g);
 		//If it is our grip, move the entire entity. If not, forward the call
 		if (i == 9999)
+		{
 			this->transformBy(offset);
+			idx = g;
+		}
 		else
-			return (Acad::eOk);//(AcDbPolyline::subMoveGripPointsAt(gripAppData, offset, bitflags));
+			return (AcDbPolyline::subMoveGripPointsAt(gripAppData, offset, bitflags));
 	}
-	return (Acad::eOk);
+	//return (Acad::eOk);
 
 	//----- If you return eNotImplemented here, that will force AutoCAD to call
 	//----- the older getGripPoints() implementation. The call below may return
