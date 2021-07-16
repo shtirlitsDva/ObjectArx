@@ -213,11 +213,16 @@ Acad::ErrorStatus AuPolyline::subGetGripPoints(
 ) const
 {
 	assertReadEnabled();
-
+	AcDbGripData* gpd = new AcDbGripData();
+	gpd->setAppData((void*)9999); // Center grip code
+	gpd->setGripPoint(GetPolylineCenter());
+	grips.append(gpd);
+	AcDbPolyline::subGetGripPoints(grips, curViewUnitSize, gripSize, curViewDir, bitflags);
+	return (Acad::eOk);
 	//----- If you return eNotImplemented here, that will force AutoCAD to call
 	//----- the older getGripPoints() implementation. The call below may return
 	//----- eNotImplemented depending of your base class.
-	return (AcDbPolyline::subGetGripPoints(grips, curViewUnitSize, gripSize, curViewDir, bitflags));
+	//return (AcDbPolyline::subGetGripPoints(grips, curViewUnitSize, gripSize, curViewDir, bitflags));
 }
 
 Acad::ErrorStatus AuPolyline::subMoveGripPointsAt(
@@ -226,11 +231,48 @@ Acad::ErrorStatus AuPolyline::subMoveGripPointsAt(
 )
 {
 	assertWriteEnabled();
+	int idx = 0;
+	for (int g = 0; g < gripAppData.length(); g++)
+	{
+		//Get grip data back and see if it is our 0 Grip
+		int i = (int)gripAppData.at(g);
+		//If it is our grip, move the entire entity. If not, forward the call
+		if (i == 9999)
+		{
+			this->transformBy(offset);
+			idx = g;
+		}
+		else
+			return (AcDbPolyline::subMoveGripPointsAt(gripAppData, offset, bitflags));
+	}
+	//return (Acad::eOk);
 
 	//----- If you return eNotImplemented here, that will force AutoCAD to call
 	//----- the older getGripPoints() implementation. The call below may return
 	//----- eNotImplemented depending of your base class.
-	return (AcDbPolyline::subMoveGripPointsAt(gripAppData, offset, bitflags));
+	//return (AcDbPolyline::subMoveGripPointsAt(gripAppData, offset, bitflags));
+}
+
+AcGePoint3d AuPolyline::GetPolylineCenter() const
+{
+	assertReadEnabled();
+	AcGePoint3d ptC, pti;
+	double cx = 0.0, cy = 0.0, cz = 0.0;
+
+	for (uint i = 0; i < numVerts(); i++)
+	{
+		this->getPointAt(i, pti);
+		cx += pti[X];
+		cy += pti[Y];
+		cz += pti[Z];
+	}
+
+	cx = cx / numVerts();
+	cy = cy / numVerts();
+	cz = cz / numVerts();
+
+	ptC.set(cx, cy, cz);
+	return ptC;
 }
 
 //-----------------------------------------------------------------------------
