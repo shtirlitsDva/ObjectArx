@@ -101,6 +101,8 @@ public:
 		const AcGeVector3d &curViewDir, const int bitflags) const ;
 	virtual Acad::ErrorStatus subMoveGripPointsAt (const AcDbVoidPtrArray &gripAppData, const AcGeVector3d &offset, const int bitflags) ;
 
+	AcGePoint3d GetPolylineCenter() const;
+
 	//----- AcDbCurve protocols
 	//- Curve property tests.
 	virtual Adesk::Boolean isClosed () const ;

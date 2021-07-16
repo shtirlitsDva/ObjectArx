@@ -166,7 +166,7 @@ public:
 //-----------------------------------------------------------------------------
 IMPLEMENT_ARX_ENTRYPOINT(CAuPolylineARXApp)
 
-ACED_ARXCOMMAND_ENTRY_AUTO(CAuPolylineARXApp, ADSKMyGroup, AuPolylineCreate, AuPolylineCreateLocal, ACRX_CMD_MODAL, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CAuPolylineARXApp, ADSKMyGroup, AuPolylineCreate, AuPLINEBATCH, ACRX_CMD_MODAL, NULL)
 //ACED_ARXCOMMAND_ENTRY_AUTO(CAuPolylineARXApp, ADSKMyGroup, MyCommand, MyCommandLocal, ACRX_CMD_MODAL, NULL)
 //ACED_ARXCOMMAND_ENTRY_AUTO(CAuPolylineARXApp, ADSKMyGroup, MyPickFirst, MyPickFirstLocal, ACRX_CMD_MODAL | ACRX_CMD_USEPICKSET, NULL)
 //ACED_ARXCOMMAND_ENTRY_AUTO(CAuPolylineARXApp, ADSKMyGroup, MySessionCmd, MySessionCmdLocal, ACRX_CMD_MODAL | ACRX_CMD_SESSION, NULL)
