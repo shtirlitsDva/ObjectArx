@@ -192,8 +192,15 @@ Acad::ErrorStatus AuPolyline::subGetGripPoints(
 ) const
 {
 	assertReadEnabled();
+	////Acad::ErrorStatus es;
+	//
+	//gripPoints.removeAt(gripPoints.length() - 1);
+	//AcGePoint3d center = GetPolylineCenter();
+	//gripPoints.append(center);
+
 	//----- This method is never called unless you return eNotImplemented 
 	//----- from the new getGripPoints() method below (which is the default implementation)
+	//return Acad::eOk;
 
 	return (AcDbPolyline::subGetGripPoints(gripPoints, osnapModes, geomIds));
 }
@@ -204,6 +211,12 @@ Acad::ErrorStatus AuPolyline::subMoveGripPointsAt(const AcDbIntArray & indices, 
 	//----- This method is never called unless you return eNotImplemented 
 	//----- from the new moveGripPointsAt() method below (which is the default implementation)
 
+	if (indices[0] == 9)
+	{
+		this->transformBy(offset);
+		return Acad::eOk;
+	}
+	else
 	return (AcDbPolyline::subMoveGripPointsAt(indices, offset));
 }
 
@@ -217,6 +230,7 @@ Acad::ErrorStatus AuPolyline::subGetGripPoints(
 	gpd->setAppData((void*)9999); // Center grip code
 	gpd->setGripPoint(GetPolylineCenter());
 	grips.append(gpd);
+	grips.removeAt(grips.length() - 1);
 	AcDbPolyline::subGetGripPoints(grips, curViewUnitSize, gripSize, curViewDir, bitflags);
 	return (Acad::eOk);
 	//----- If you return eNotImplemented here, that will force AutoCAD to call
@@ -231,26 +245,25 @@ Acad::ErrorStatus AuPolyline::subMoveGripPointsAt(
 )
 {
 	assertWriteEnabled();
-	int idx = 0;
-	for (int g = 0; g < gripAppData.length(); g++)
-	{
-		//Get grip data back and see if it is our 0 Grip
-		int i = (int)gripAppData.at(g);
-		//If it is our grip, move the entire entity. If not, forward the call
-		if (i == 9999)
-		{
-			this->transformBy(offset);
-			idx = g;
-		}
-		else
-			return (AcDbPolyline::subMoveGripPointsAt(gripAppData, offset, bitflags));
-	}
+	
+	//for (int g = 0; g < gripAppData.length(); g++)
+	//{
+	//	//Get grip data back and see if it is our 0 Grip
+	//	int i = (int)gripAppData.at(g);
+	//	//If it is our grip, move the entire entity. If not, forward the call
+	//	if (i == 9999)
+	//	{
+	//		this->transformBy(offset);
+	//	}
+	//	else
+	//		return (AcDbCurve::subMoveGripPointsAt(gripAppData, offset, bitflags));
+	//}
 	//return (Acad::eOk);
 
 	//----- If you return eNotImplemented here, that will force AutoCAD to call
 	//----- the older getGripPoints() implementation. The call below may return
 	//----- eNotImplemented depending of your base class.
-	//return (AcDbPolyline::subMoveGripPointsAt(gripAppData, offset, bitflags));
+	return (AcDbPolyline::subMoveGripPointsAt(gripAppData, offset, bitflags));
 }
 
 AcGePoint3d AuPolyline::GetPolylineCenter() const
